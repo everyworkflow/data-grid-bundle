@@ -15,12 +15,13 @@ import {DATA_GRID_TYPE_INLINE} from '@EveryWorkflow/DataGridBundle/Component/Dat
 import ColumnConfigComponent from '@EveryWorkflow/DataGridBundle/Component/ColumnConfigComponent';
 import {ACTION_SET_SELECTED_ROW_IDS} from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
+import SelectFieldInterface from "@EveryWorkflow/DataFormBundle/Model/Field/SelectFieldInterface";
 
 const TableComponent = () => {
     const {state: gridState, dispatch: gridDispatch} = useContext(DataGridContext);
     const [selectedRows, setSelectedRows] = useState<Array<any>>([]);
     const history = useHistory();
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(history.location.search);
 
     const getColumnData = useCallback(() => {
         const columnData: Array<any> = [];
@@ -42,6 +43,7 @@ const TableComponent = () => {
                     // eslint-disable-next-line react/display-name
                     render: (value: any) => <span>{value}</span>,
                     sortOrder: field.name === sortField ? sortOrder : false,
+                    width: 240,
                 });
             }
         });
@@ -50,7 +52,7 @@ const TableComponent = () => {
                 title: 'Action',
                 key: 'operation',
                 fixed: 'right',
-                width: 100,
+                width: 84,
                 // eslint-disable-next-line react/display-name
                 render: (_: any, record: any) => (
                     <Dropdown
@@ -97,13 +99,31 @@ const TableComponent = () => {
 
     const getDataSource = useCallback(() => {
         const data: Array<any> = [];
+
+        const getSelectOptionValue = (field: SelectFieldInterface, fieldValue: string): string => {
+            field.options?.forEach(option => {
+                if (option.key?.toString() === fieldValue.toString()) {
+                    fieldValue = option.value?.toString();
+                }
+            });
+            return fieldValue;
+        }
+
         gridState.data_collection?.results.forEach((item) => {
             const newItem: any = {
                 key: item._id,
             };
             gridState.data_grid_column_state.forEach((col) => {
                 if (col.name in item) {
-                    newItem[col.name] = item[col.name];
+                    const fieldValue: any = item[col.name];
+                    const field = gridState.data_form?.fields.find(field => {
+                        return field.name === col.name;
+                    });
+                    if (field && 'select_field' === field.field_type) {
+                        newItem[col.name] = getSelectOptionValue(field, fieldValue);
+                    } else {
+                        newItem[col.name] = fieldValue;
+                    }
                 }
             });
             data.push(newItem);
@@ -166,9 +186,11 @@ const TableComponent = () => {
                 <>
                     <FilterComponent/>
                     <Table
+                        className="virtual-grid"
                         rowSelection={getRowSelection()}
                         dataSource={getDataSource()}
                         columns={getColumnData()}
+                        scroll={{ x: 1500 }}
                         pagination={{
                             defaultPageSize: Number(urlParams.get('per-page')) ? Number(urlParams.get('per-page')) : 20,
                             pageSizeOptions: ['20', '50', '100', '200'],
