@@ -192,6 +192,7 @@ const TableComponent = () => {
                         columns={getColumnData()}
                         scroll={{ x: 1500 }}
                         pagination={{
+                            position: ["topRight", "bottomRight"],
                             defaultPageSize: Number(urlParams.get('per-page')) ? Number(urlParams.get('per-page')) : 20,
                             pageSizeOptions: ['20', '50', '100', '200'],
                             showQuickJumper: true,
