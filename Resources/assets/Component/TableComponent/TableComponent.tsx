@@ -87,6 +87,9 @@ const TableComponent = () => {
           </Link>
         );
       case 'delete':
+        if (confirmLoading) {
+          return;
+        }
         return (
           <div onClick={() => showPopconfirm(record._id)}>{action.label}</div>
         );
