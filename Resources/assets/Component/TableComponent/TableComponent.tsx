@@ -1,8 +1,7 @@
 /*
  * @copyright EveryWorkflow. All rights reserved.
  */
-
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Table from 'antd/lib/table';
 import Menu from 'antd/lib/menu';
@@ -18,8 +17,8 @@ import ColumnConfigComponent from '@EveryWorkflow/DataGridBundle/Component/Colum
 import { ACTION_SET_SELECTED_ROW_IDS } from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import SelectFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/SelectFieldInterface';
+import DataGridStateInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridStateInterface';
 
-let id: string = '';
 const TableComponent = () => {
   const { state: gridState, dispatch: gridDispatch } =
     useContext(DataGridContext);
@@ -28,9 +27,15 @@ const TableComponent = () => {
   const urlParams = new URLSearchParams(history.location.search);
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [tableData, setTableData] = useState<DataGridStateInterface | any>({});
+  const [id, setid] = useState<string>('');
+
+  useEffect(() => {
+    setTableData(gridState);
+  }, [gridState]);
 
   const showPopconfirm = (_id: string) => {
-    id = _id;
+    setid(_id);
     setVisible(true);
   };
 
@@ -40,10 +45,18 @@ const TableComponent = () => {
 
   const handleOk = () => {
     setConfirmLoading(true);
-    setTimeout(() => {
-      setVisible(false);
-      setConfirmLoading(false);
-    }, 2000);
+    //api for delete
+    //filter data after response from api
+    setTableData({
+      ...tableData,
+      data_collection: {
+        results: tableData.data_collection?.results.filter(
+          (item: any) => item._id !== id
+        ),
+      },
+    });
+    setVisible(false);
+    setConfirmLoading(false);
   };
 
   const handleAction = ({
@@ -90,15 +103,16 @@ const TableComponent = () => {
       sortOrder = 'descend';
     }
 
-    gridState.data_grid_column_state.forEach((col) => {
-      const field = gridState.data_form?.fields.find(
-        (item) => item.name === col.name
+    tableData.data_grid_column_state.forEach((col: any) => {
+      const field = tableData.data_form?.fields.find(
+        (item: any) => item.name === col.name
       );
+
       if (field) {
         columnData.push({
           title: field.label,
           dataIndex: field.name,
-          sorter: gridState.data_grid_config?.sortable_columns?.includes(
+          sorter: tableData.data_grid_config?.sortable_columns?.includes(
             field.name ?? ''
           ),
           // eslint-disable-next-line react/display-name
@@ -116,6 +130,8 @@ const TableComponent = () => {
         width: 84,
         // eslint-disable-next-line react/display-name
         render: (_: any, record: any) => {
+          console.log('id -> ', id === record._id);
+
           return (
             <>
               {id === record._id && (
@@ -131,7 +147,7 @@ const TableComponent = () => {
               <Dropdown
                 overlay={
                   <Menu>
-                    {gridState.data_grid_config?.row_actions?.map(
+                    {tableData.data_grid_config?.row_actions?.map(
                       (action: any, index: number) => (
                         <Menu.Item key={index}>
                           {handleAction({ action, index, record })}
@@ -153,7 +169,7 @@ const TableComponent = () => {
       });
     }
     return columnData;
-  }, [gridState, visible, confirmLoading]);
+  }, [tableData, visible, confirmLoading, id]);
 
   const getDataSource = useCallback(() => {
     const data: Array<any> = [];
@@ -170,14 +186,14 @@ const TableComponent = () => {
       return fieldValue;
     };
 
-    gridState.data_collection?.results.forEach((item) => {
+    tableData.data_collection?.results.forEach((item: any) => {
       const newItem: any = {
         key: item._id,
       };
-      gridState.data_grid_column_state.forEach((col) => {
+      tableData.data_grid_column_state.forEach((col: any) => {
         if (col.name in item) {
           const fieldValue: any = item[col.name];
-          const field = gridState.data_form?.fields.find((field) => {
+          const field = tableData.data_form?.fields.find((field: any) => {
             return field.name === col.name;
           });
           if (field && 'select_field' === field.field_type) {
@@ -189,8 +205,9 @@ const TableComponent = () => {
       });
       data.push(newItem);
     });
+
     return data;
-  }, [gridState]);
+  }, [tableData, confirmLoading]);
 
   const getRowSelection = useCallback(() => {
     const onSelectChange = (selectedRowKeys: Array<any>) => {
@@ -214,7 +231,7 @@ const TableComponent = () => {
   }, [selectedRows, gridDispatch]);
 
   const onTableChange = (pagination: any, filters: any, sorter: any) => {
-    if (gridState.data_grid_url) {
+    if (tableData.data_grid_url) {
       let newUrlPath = history.location.pathname;
       newUrlPath += '?page=' + pagination.current;
       if (
@@ -247,10 +264,10 @@ const TableComponent = () => {
 
   return (
     <>
-      {gridState.data_grid_type === DATA_GRID_TYPE_INLINE && (
+      {tableData.data_grid_type === DATA_GRID_TYPE_INLINE && (
         <HeaderPanelComponent />
       )}
-      {gridState.data_collection && (
+      {tableData.data_collection && (
         <>
           <FilterComponent />
           <Table
@@ -270,8 +287,8 @@ const TableComponent = () => {
               showTotal: (total, range) => {
                 return `Showing ${range[0]}-${range[1]} of ${total} items`;
               },
-              current: gridState.data_collection.meta?.current_page,
-              total: gridState.data_collection.meta?.total_count,
+              current: tableData.data_collection.meta?.current_page,
+              total: tableData.data_collection.meta?.total_count,
             }}
             onChange={onTableChange}
             // size={'small'}
