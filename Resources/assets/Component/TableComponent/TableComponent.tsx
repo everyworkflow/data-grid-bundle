@@ -133,8 +133,6 @@ const TableComponent = () => {
         width: 84,
         // eslint-disable-next-line react/display-name
         render: (_: any, record: any) => {
-          console.log('id -> ', id === record._id);
-
           return (
             <>
               {id === record._id && (
