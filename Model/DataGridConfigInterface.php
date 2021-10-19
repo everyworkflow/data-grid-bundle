@@ -22,6 +22,11 @@ interface DataGridConfigInterface extends ArrayableInterface
     public const KEY_FILTERABLE_COLUMNS = 'filterable_columns';
     public const KEY_IS_FILTER_ENABLED = 'is_filter_enabled';
     public const KEY_IS_COLUMN_SETTING_ENABLED = 'is_column_setting_enabled';
+    public const KEY_DEFAULT_SORT_ORDER = 'default_sort_order';
+    public const KEY_DEFAULT_SORT_FIELD = 'default_sort_field';
+
+    public const SORT_ORDER_ASC = 'asc';
+    public const SORT_ORDER_DESC = 'desc';
 
     public function getActionFactory(): ActionFactoryInterface;
 
@@ -98,4 +103,12 @@ interface DataGridConfigInterface extends ArrayableInterface
     public function isColumnSettingEnabled(): bool;
 
     public function setIsColumnSettingEnabled(bool $isColumnSettingEnabled): self;
+
+    public function getDefaultSortOrder(): string;
+
+    public function setDefaultSortOrder(string $defaultSortOrder): self;
+
+    public function getDefaultSortField(): string;
+
+    public function setDefaultSortField(string $defaultSortOrder): self;
 }

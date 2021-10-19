@@ -25,10 +25,21 @@ const TableComponent = () => {
 
     const getColumnData = useCallback(() => {
         const columnData: Array<any> = [];
-        const sortField = urlParams.get('sort-field');
+        const sortField = urlParams.get('sort-field') ?? gridState.data_grid_config?.default_sort_field;
         let sortOrder = 'ascend';
         if (urlParams.get('sort-order') && urlParams.get('sort-order') === 'desc') {
             sortOrder = 'descend';
+        }
+        if (urlParams.get('sort-order') === null && gridState.data_grid_config?.default_sort_order) {
+            switch (gridState.data_grid_config?.default_sort_order) {
+                case 'desc':
+                    sortOrder = 'descend';
+                    break;
+                case 'asc': {
+                    sortOrder = 'ascend';
+                    break;
+                }
+            }
         }
 
         gridState.data_grid_column_state.forEach((col) => {
@@ -47,6 +58,7 @@ const TableComponent = () => {
                 });
             }
         });
+        // if (columnData.length && gridState.data_grid_config?.row_actions?.length) {
         if (columnData.length) {
             columnData.push({
                 title: 'Action',

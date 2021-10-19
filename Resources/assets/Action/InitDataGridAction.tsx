@@ -32,6 +32,8 @@ const InitDataGridAction = (dataGridUrl: string) => {
             }
         });
 
+        columnState.sort((a: any, b: any) => a.sort_order > b.sort_order ? 1 : -1);
+
         dispatch({
             type: ACTION_SET_GRID_DATA,
             payload: { ...data, data_grid_column_state: columnState },

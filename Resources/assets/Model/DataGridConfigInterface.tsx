@@ -27,6 +27,8 @@ interface DataGridConfigInterface {
     filterable_columns?: Array<string>;
     is_filter_enabled?: boolean;
     is_column_setting_enabled?: boolean;
+    default_sort_field?: string;
+    default_sort_order?: string;
 }
 
 export default DataGridConfigInterface;

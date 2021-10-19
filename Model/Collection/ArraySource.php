@@ -28,7 +28,7 @@ class ArraySource implements ArraySourceInterface
     protected DataObjectFactoryInterface $dataObjectFactory;
 
     public function __construct(
-        array $results,
+        array $results = [],
         DataCollectionInterface $dataCollection,
         DataObjectFactoryInterface $dataObjectFactory
     ) {

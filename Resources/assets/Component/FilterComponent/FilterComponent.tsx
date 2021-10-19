@@ -8,7 +8,7 @@ import Card from 'antd/lib/card';
 import Button from 'antd/lib/button';
 import Form from 'antd/lib/form';
 import {useHistory} from "react-router-dom";
-import {FORM_TYPE_INLINE} from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent';
+import {FORM_TYPE_HORIZONTAL, FORM_TYPE_INLINE} from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent';
 import DataFormComponent from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent';
 import DataGridContext, {PANEL_ACTIVE_FILTERS} from '@EveryWorkflow/DataGridBundle/Context/DataGridContext';
 import {ACTION_SET_ACTIVE_PANEL} from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
@@ -124,7 +124,7 @@ const FilterComponent = () => {
                 <DataFormComponent
                     className={'data-grid-filters'}
                     form={form}
-                    formType={FORM_TYPE_INLINE}
+                    formType={getFilterFormData().fields.length < 4 ? FORM_TYPE_HORIZONTAL : FORM_TYPE_INLINE}
                     formData={getFilterFormData()}
                     onSubmit={onColumnFormSubmit}
                 />
