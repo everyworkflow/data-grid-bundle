@@ -33,7 +33,7 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
         DataCollectionInterface $dataCollection,
         DataObjectFactoryInterface $dataObjectFactory,
     ) {
-        parent::__construct([], $dataCollection, $dataObjectFactory);
+        parent::__construct($dataCollection, $dataObjectFactory, []);
         $this->baseRepository = $baseRepository;
         $this->dataGridConfig = $dataGridConfig;
         $this->dataGridParameter = $dataGridParameter;
@@ -109,9 +109,16 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
         $fields = array_column($formData['fields'], null, 'name');
         foreach ($applicableFilters as $key => $val) {
             /* TODO: find better way to build mongo filter query */
-            if (is_string($val)) {
+            if (
+                isset($fields[$key]['field_type']) &&
+                in_array($fields[$key]['field_type'], [
+                    'select_field',
+                ])
+            ) {
+                $applicableFilters[$key] = $val;
+            } else if (is_string($val)) {
                 $applicableFilters[$key] = new Regex($val, 'i');
-            } elseif (
+            } else if (
                 is_array($val) && 2 === count($val) &&
                 isset($fields[$key]['field_type']) &&
                 in_array($fields[$key]['field_type'], [
@@ -146,6 +153,13 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
                 }
                 $applicableOptions['sort'][$options['sort_field']] = $sortOrder;
             }
+        } else if ($this->getConfig()->getDefaultSortField() && $this->getConfig()->getDefaultSortOrder()) {
+            $defaultSortOrder = $this->getConfig()->getDefaultSortOrder();
+            $sortOrder = 1; // asc
+            if ('desc' === $defaultSortOrder) {
+                $sortOrder = -1; // desc
+            }
+            $applicableOptions['sort'][$this->getConfig()->getDefaultSortField()] = $sortOrder;
         }
 
         if (isset($options['skip']) && is_numeric($options['skip']) && $options['skip'] > 0) {

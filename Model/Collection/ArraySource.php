@@ -28,13 +28,13 @@ class ArraySource implements ArraySourceInterface
     protected DataObjectFactoryInterface $dataObjectFactory;
 
     public function __construct(
-        array $results = [],
         DataCollectionInterface $dataCollection,
-        DataObjectFactoryInterface $dataObjectFactory
+        DataObjectFactoryInterface $dataObjectFactory,
+        array $results = [],
     ) {
-        $this->results = $results;
         $this->dataCollection = $dataCollection;
         $this->dataObjectFactory = $dataObjectFactory;
+        $this->results = $results;
     }
 
     public function getCollection(): DataCollectionInterface

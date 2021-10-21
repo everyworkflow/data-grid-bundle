@@ -178,7 +178,7 @@ class DataGridConfig implements DataGridConfigInterface
         return $this;
     }
 
-    public function getDefaultSortOrder(): string
+    public function getDefaultSortOrder(): ?string
     {
         return $this->dataObject->getData(self::KEY_DEFAULT_SORT_ORDER);
     }
@@ -189,7 +189,7 @@ class DataGridConfig implements DataGridConfigInterface
         return $this;
     }
 
-    public function getDefaultSortField(): string
+    public function getDefaultSortField(): ?string
     {
         return $this->dataObject->getData(self::KEY_DEFAULT_SORT_FIELD);
     }

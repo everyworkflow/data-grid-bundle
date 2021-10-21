@@ -104,11 +104,11 @@ interface DataGridConfigInterface extends ArrayableInterface
 
     public function setIsColumnSettingEnabled(bool $isColumnSettingEnabled): self;
 
-    public function getDefaultSortOrder(): string;
+    public function getDefaultSortOrder(): ?string;
 
     public function setDefaultSortOrder(string $defaultSortOrder): self;
 
-    public function getDefaultSortField(): string;
+    public function getDefaultSortField(): ?string;
 
     public function setDefaultSortField(string $defaultSortOrder): self;
 }
