@@ -10,6 +10,7 @@ namespace EveryWorkflow\DataGridBundle;
 
 use EveryWorkflow\DataGridBundle\DependencyInjection\DataGridExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class EveryWorkflowDataGridBundle extends Bundle
@@ -22,7 +23,7 @@ class EveryWorkflowDataGridBundle extends Bundle
         parent::build($container);
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new DataGridExtension();
     }
