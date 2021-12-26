@@ -3,15 +3,15 @@
  */
 
 import React, {useCallback, useContext} from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import Col from 'antd/lib/col';
 import Space from 'antd/lib/space';
 import Button from 'antd/lib/button';
 import Tooltip from 'antd/lib/tooltip';
 import ControlOutlined from '@ant-design/icons/ControlOutlined';
 import FilterOutlined from '@ant-design/icons/FilterOutlined';
-import BreadcrumbComponent from '@EveryWorkflow/AdminPanelBundle/Admin/Component/BreadcrumbComponent';
-import PageHeaderComponent from '@EveryWorkflow/AdminPanelBundle/Admin/Component/PageHeaderComponent';
+import BreadcrumbComponent from '@EveryWorkflow/AdminPanelBundle/Component/BreadcrumbComponent';
+import PageHeaderComponent from '@EveryWorkflow/AdminPanelBundle/Component/PageHeaderComponent';
 import DataGridContext, {
     PANEL_ACTIVE_COLUMN_SETTINGS,
     PANEL_ACTIVE_FILTERS,
@@ -24,13 +24,13 @@ interface PageWrapperComponentProps {
 }
 
 const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
-    const history = useHistory();
+    const location = useLocation();
     const {state: gridState, dispatch: gridDispatch} = useContext(
         DataGridContext
     );
 
     const getFilterCount = useCallback((): number => {
-        const urlParams = new URLSearchParams(history.location.search);
+        const urlParams = new URLSearchParams(location.search);
         let urlParamData: any | undefined = undefined;
         if (urlParams.get('filter') !== null && urlParams.get('filter') !== '') {
             try {

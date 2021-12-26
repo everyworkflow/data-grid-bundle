@@ -7,15 +7,11 @@ import FetchRemoteData from '@EveryWorkflow/DataGridBundle/Action/FetchRemoteDat
 import DataGridInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridInterface';
 import AbstractFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface';
 import DataGridColumnInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridColumnInterface';
+import AlertAction, { ALERT_TYPE_ERROR } from '@EveryWorkflow/PanelBundle/Action/AlertAction';
 
 const InitDataGridAction = (dataGridUrl: string) => {
-    return async (dispatch: any) => {
-        if (!dataGridUrl) {
-            return false;
-        }
 
-        const data: DataGridInterface = await FetchRemoteData(dataGridUrl);
-
+    const initDataGrid = (dispatch: any, data: DataGridInterface) => {
         const columnState: Array<DataGridColumnInterface> = [];
         if (dataGridUrl) {
             // fetch from localstorage
@@ -37,6 +33,23 @@ const InitDataGridAction = (dataGridUrl: string) => {
         dispatch({
             type: ACTION_SET_GRID_DATA,
             payload: { ...data, data_grid_column_state: columnState },
+        });
+    }
+
+    return async (dispatch: any) => {
+        if (!dataGridUrl) {
+            return false;
+        }
+
+        FetchRemoteData(dataGridUrl).then((data: DataGridInterface) => {
+            initDataGrid(dispatch, data);
+        }).catch((error: any) => {
+            console.log('error -->', error.message);
+            AlertAction({
+                message: error.message,
+                title: 'Fetch error',
+                type: ALERT_TYPE_ERROR,
+            });
         });
     };
 };

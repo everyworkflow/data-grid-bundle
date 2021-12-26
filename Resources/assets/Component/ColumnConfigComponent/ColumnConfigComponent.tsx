@@ -5,8 +5,8 @@
 import React, { useCallback, useContext } from 'react';
 import Button from 'antd/lib/button';
 import Form from 'antd/lib/form';
-import SidePanelComponent from '@EveryWorkflow/CoreBundle/Component/SidePanelComponent';
-import { PANEL_SIZE_SMALL } from '@EveryWorkflow/CoreBundle/Component/SidePanelComponent/SidePanelComponent';
+import SidePanelComponent from '@EveryWorkflow/PanelBundle/Component/SidePanelComponent';
+import { PANEL_SIZE_SMALL } from '@EveryWorkflow/PanelBundle/Component/SidePanelComponent/SidePanelComponent';
 import DataForm from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent';
 import { FORM_TYPE_HORIZONTAL } from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent';
 import AbstractFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface';

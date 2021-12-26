@@ -2,7 +2,7 @@
  * @copyright EveryWorkflow. All rights reserved.
  */
 
-import Remote from '@EveryWorkflow/AdminPanelBundle/Admin/Service/Remote';
+import Remote from '@EveryWorkflow/PanelBundle/Service/Remote';
 import DataGridInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridInterface';
 
 const FetchRemoteData = async (

@@ -136,7 +136,7 @@ class DataGridFactory implements DataGridFactoryInterface
                 $this->dataObjectFactory
             );
         }
-        return new ArraySource($repositoryOrDataObjects, $dataCollection, $this->dataObjectFactory);
+        return new ArraySource($dataCollection, $this->dataObjectFactory, $repositoryOrDataObjects);
     }
 
     public function create(

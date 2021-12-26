@@ -7,7 +7,7 @@ import Space from 'antd/lib/space';
 import Card from 'antd/lib/card';
 import Button from 'antd/lib/button';
 import Form from 'antd/lib/form';
-import {useHistory} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {FORM_TYPE_HORIZONTAL, FORM_TYPE_INLINE} from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent';
 import DataFormComponent from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent';
 import DataGridContext, {PANEL_ACTIVE_FILTERS} from '@EveryWorkflow/DataGridBundle/Context/DataGridContext';
@@ -18,13 +18,14 @@ import '@EveryWorkflow/DataGridBundle/Component/FilterComponent/FilterStyle.scss
 const FilterComponent = () => {
     const {state: gridState, dispatch: gridDispatch} = useContext(DataGridContext);
     const [form] = Form.useForm();
-    const history = useHistory();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const getFilterFormData = useCallback(() => {
         const formData: DataFormInterface = {
             fields: []
         };
-        const urlParams = new URLSearchParams(history.location.search);
+        const urlParams = new URLSearchParams(location.search);
         let urlParamData: any | undefined = undefined;
         if (urlParams.get('filter') !== null && urlParams.get('filter') !== '') {
             try {
@@ -52,7 +53,7 @@ const FilterComponent = () => {
             }
         });
         return formData;
-    }, [gridState.data_form, gridState.data_grid_config, history]);
+    }, [gridState.data_form, gridState.data_grid_config, location]);
 
     const onColumnFormSubmit = (data: any) => {
         const filterData: any = {};
@@ -61,11 +62,11 @@ const FilterComponent = () => {
                 filterData[key] = data[key];
             }
         });
-        let newUrlPath = history.location.pathname;
+        let newUrlPath = location.pathname;
         if (Object.keys(filterData).length) {
             newUrlPath += '?filter=' + JSON.stringify(filterData);
         }
-        history.push(newUrlPath);
+        navigate(newUrlPath);
     };
 
     const handleResetFilter = () => {
@@ -77,10 +78,10 @@ const FilterComponent = () => {
             }
         })
         form.setFieldsValue(emptyFieldValues);
-        history.push(history.location.pathname);
+        navigate(location.pathname);
     }
 
-    if (!(gridState.active_panel === PANEL_ACTIVE_FILTERS || history.location.search.includes('filter={'))) {
+    if (!(gridState.active_panel === PANEL_ACTIVE_FILTERS || location.search.includes('filter={'))) {
         return null;
     }
 

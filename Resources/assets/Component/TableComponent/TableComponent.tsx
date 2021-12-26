@@ -3,7 +3,7 @@
  */
 
 import React, {useCallback, useContext, useState} from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import Table from 'antd/lib/table';
 import Menu from 'antd/lib/menu';
 import Dropdown from 'antd/lib/dropdown';
@@ -20,8 +20,9 @@ import SelectFieldInterface from "@EveryWorkflow/DataFormBundle/Model/Field/Sele
 const TableComponent = () => {
     const {state: gridState, dispatch: gridDispatch} = useContext(DataGridContext);
     const [selectedRows, setSelectedRows] = useState<Array<any>>([]);
-    const history = useHistory();
-    const urlParams = new URLSearchParams(history.location.search);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const urlParams = new URLSearchParams(location.search);
 
     const getColumnData = useCallback(() => {
         const columnData: Array<any> = [];
@@ -66,44 +67,48 @@ const TableComponent = () => {
                 fixed: 'right',
                 width: 84,
                 // eslint-disable-next-line react/display-name
-                render: (_: any, record: any) => (
-                    <Dropdown
-                        overlay={
-                            <Menu>
-                                {gridState.data_grid_config?.row_actions?.map(
-                                    (action: any, index: number) => (
-                                        <Menu.Item key={index}>
-                                            <Link
-                                                to={() => {
-                                                    if (action.path) {
-                                                        let path: string = action.path;
-                                                        Object.keys(record).forEach((itemKey: string) => {
-                                                            path = path.replace(
-                                                                '{' + itemKey + '}',
-                                                                record[itemKey]
-                                                            );
-                                                        });
-                                                        return {pathname: path};
-                                                    }
-                                                    return '';
-                                                }}
-                                                target={action.button_target}
-                                            >
-                                                {action.label}
-                                            </Link>
-                                        </Menu.Item>
-                                    )
-                                )}
-                            </Menu>
+                render: (_: any, record: any) => {
+                    const generateMenuLink = (action: any) => {
+                        if (action.path) {
+                            let path: string = action.path;
+                            Object.keys(record).forEach((itemKey: string) => {
+                                path = path.replace(
+                                    '{' + itemKey + '}',
+                                    record[itemKey]
+                                );
+                            });
+                            return path;
                         }
-                        trigger={['click']}
-                        placement="bottomRight"
-                    >
-                        <Button type="text" size="small">
-                            <EllipsisOutlined/>
-                        </Button>
-                    </Dropdown>
-                ),
+                        return '';
+                    }
+
+                    return (
+                        <Dropdown
+                            overlay={
+                                <Menu>
+                                    {gridState.data_grid_config?.row_actions?.map(
+                                        (action: any, index: number) => (
+                                            <Menu.Item key={index}>
+                                                <Link
+                                                    to={generateMenuLink(action)}
+                                                    target={action.button_target}
+                                                >
+                                                    {action.label}
+                                                </Link>
+                                            </Menu.Item>
+                                        )
+                                    )}
+                                </Menu>
+                            }
+                            trigger={['click']}
+                            placement="bottomRight"
+                        >
+                            <Button type="text" size="small">
+                                <EllipsisOutlined/>
+                            </Button>
+                        </Dropdown>
+                    );
+                },
             });
         }
         return columnData;
@@ -166,7 +171,7 @@ const TableComponent = () => {
 
     const onTableChange = (pagination: any, filters: any, sorter: any) => {
         if (gridState.data_grid_url) {
-            let newUrlPath = history.location.pathname;
+            let newUrlPath = location.pathname;
             newUrlPath += '?page=' + pagination.current;
             if (pagination.pageSize && pagination.pageSize > 0 && pagination.pageSize !== 20) {
                 newUrlPath += '&per-page=' + pagination.pageSize;
@@ -185,7 +190,7 @@ const TableComponent = () => {
                 }
                 newUrlPath += '&sort-field=' + sorter.field + '&sort-order=' + sortOrder;
             }
-            history.push(newUrlPath);
+            navigate(newUrlPath);
         }
     }
 
@@ -208,7 +213,6 @@ const TableComponent = () => {
                             defaultPageSize: Number(urlParams.get('per-page')) ? Number(urlParams.get('per-page')) : 20,
                             pageSizeOptions: ['20', '50', '100', '200'],
                             showQuickJumper: true,
-                            hideOnSinglePage: true,
                             showTotal: (total, range) => {
                                 return `Showing ${range[0]}-${range[1]} of ${total} items`;
                             },
