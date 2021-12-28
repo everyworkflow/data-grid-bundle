@@ -11,9 +11,7 @@
     ],
     "require": {
         "nesbot/carbon": "^2.55",
-        "everyworkflow/core-bundle": "dev-main",
-        "everyworkflow/data-form-bundle": "dev-main",
-        "everyworkflow/mongo-bundle": "dev-main"
+        "everyworkflow/core-bundle": "dev-main"
     },
     "autoload": {
         "psr-4": {
