@@ -10,13 +10,18 @@ namespace EveryWorkflow\DataGridBundle\Model;
 
 use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataGridBundle\Factory\ActionFactoryInterface;
-use EveryWorkflow\DataGridBundle\Model\Action\ButtonActionInterface;
+use EveryWorkflow\DataGridBundle\Model\ActionInterface;
 
 interface DataGridConfigInterface extends ArrayableInterface
 {
     public const KEY_HEADER_ACTIONS = 'header_actions';
     public const KEY_ROW_ACTIONS = 'row_actions';
     public const KEY_BULK_ACTIONS = 'bulk_actions';
+
+    public const KEY_HEADER_ACTION_TYPE = 'header_action_type';
+    public const KEY_ROW_ACTION_TYPE = 'row_action_type';
+    public const KEY_BULK_ACTION_TYPE = 'bulk_action_type';
+
     public const KEY_ACTIVE_COLUMNS = 'active_columns';
     public const KEY_SORTABLE_COLUMNS = 'sortable_columns';
     public const KEY_FILTERABLE_COLUMNS = 'filterable_columns';
@@ -25,43 +30,64 @@ interface DataGridConfigInterface extends ArrayableInterface
     public const KEY_DEFAULT_SORT_ORDER = 'default_sort_order';
     public const KEY_DEFAULT_SORT_FIELD = 'default_sort_field';
 
+    public const HEADER_ACTION_TYPE_BASE = ''; // default
+    public const HEADER_ACTION_TYPE_DROPDOWN = 'dropdown';
+
+    public const ROW_ACTION_TYPE_BASE = ''; // default
+    public const ROW_ACTION_TYPE_DROPDOWN = 'dropdown';
+
+    public const BULK_ACTION_TYPE_BASE = ''; // default
+    public const BULK_ACTION_TYPE_DROPDOWN = 'dropdown';
+
     public const SORT_ORDER_ASC = 'asc';
     public const SORT_ORDER_DESC = 'desc';
 
     public function getActionFactory(): ActionFactoryInterface;
 
     /**
-     * @return ButtonActionInterface[]
+     * @return ActionInterface[]
      */
     public function getHeaderActions(): array;
 
     /**
-     * @param ButtonActionInterface[] $actions
+     * @param ActionInterface[] $actions
      * @return self
      */
     public function setHeaderActions(array $actions): self;
 
     /**
-     * @return ButtonActionInterface[]
+     * @return ActionInterface[]
      */
     public function getRowActions(): array;
 
     /**
-     * @param ButtonActionInterface[] $actions
+     * @param ActionInterface[] $actions
      * @return self
      */
     public function setRowActions(array $actions): self;
 
     /**
-     * @return ButtonActionInterface[]
+     * @return ActionInterface[]
      */
     public function getBulkActions(): array;
 
     /**
-     * @param ButtonActionInterface[] $actions
+     * @param ActionInterface[] $actions
      * @return self
      */
     public function setBulkActions(array $actions): self;
+
+    public function setHeaderActionType(string $headerActionType): self;
+
+    public function getHeaderActionType(): ?string;
+
+    public function setRowActionType(string $rowActionType): self;
+
+    public function getRowActionType(): ?string;
+
+    public function setBulkActionType(string $bulkActionType): self;
+
+    public function getBulkActionType(): ?string;
 
     /**
      * @return string[]

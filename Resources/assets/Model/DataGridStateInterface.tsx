@@ -4,7 +4,7 @@
 
 // import ResultResponseDataInterface from './ResultResponseDataInterface';
 // import ListOrderInterface from './ListOrderInterface';
-// import AbstractFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface';
+// import BaseFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/BaseFieldInterface';
 // import ListColumnDataInterface from './ListColumnDataInterface';
 // import ButtonActionInterface from './Action/ButtonActionInterface';
 // import ListBulkActionInterface from './Action/ListBulkActionInterface';
@@ -24,7 +24,7 @@ interface DataGridStateInterface {
     // active_columns: Array<string>;
 
     // response_data?: ResultResponseDataInterface;
-    // form_builder_data: Array<AbstractFieldInterface>;
+    // form_builder_data: Array<BaseFieldInterface>;
     // column_data: Array<ListColumnDataInterface>;
     // list_order?: ListOrderInterface;
     // list_actions: Array<ButtonActionInterface>;
@@ -38,6 +38,16 @@ interface DataGridStateInterface {
     data_grid_config?: DataGridConfigInterface;
     data_form?: DataFormInterface;
     data_grid_column_state: Array<DataGridColumnInterface>;
+
+    grid_header_action_maps?: any;
+    grid_row_action_maps?: any;
+    grid_bulk_action_maps?: any;
+    grid_column_maps?: any;
+    grid_filter_fields_maps?: any;
+
+    popup_form_data?: {
+        get_path?: string;
+    };
 }
 
 export default DataGridStateInterface;

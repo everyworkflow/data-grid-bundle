@@ -8,15 +8,12 @@ import Form from 'antd/lib/form';
 import SidePanelComponent from '@EveryWorkflow/PanelBundle/Component/SidePanelComponent';
 import { PANEL_SIZE_SMALL } from '@EveryWorkflow/PanelBundle/Component/SidePanelComponent/SidePanelComponent';
 import DataForm from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent';
-import { FORM_TYPE_HORIZONTAL } from '@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent';
-import AbstractFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface';
+import BaseFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/BaseFieldInterface';
 import CheckFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/CheckFieldInterface';
 import DataFormInterface from '@EveryWorkflow/DataFormBundle/Model/DataFormInterface';
 import DataGridContext, { PANEL_ACTIVE_COLUMN_SETTINGS } from '@EveryWorkflow/DataGridBundle/Context/DataGridContext';
-import {
-    ACTION_SET_ACTIVE_COLUMNS,
-    ACTION_SET_ACTIVE_PANEL
-} from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
+import { ACTION_SET_COLUMN_STATE, ACTION_SET_ACTIVE_PANEL } from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
+import { FORM_TYPE_HORIZONTAL } from "@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent";
 
 const ColumnConfigComponent = () => {
     const { state: gridState, dispatch: gridDispatch } = useContext(
@@ -28,48 +25,73 @@ const ColumnConfigComponent = () => {
         gridDispatch({ type: ACTION_SET_ACTIVE_PANEL, payload: undefined });
     }, [gridDispatch]);
 
+    const getFormInitialValues = useCallback(() => {
+        const initialValues: any = {};
+        gridState.data_grid_column_state.forEach((item) => {
+            if (item.is_active) {
+                initialValues[item.name] = true;
+            }
+        });
+
+        return initialValues;
+    }, [gridState.data_grid_column_state]);
+
+    const getSortedData = (items: Array<any>): Array<any> => {
+        return items?.sort((a: any, b: any) => {
+            if (a.sort_order === undefined && b.sort_order !== undefined) return 1;
+            if (a.sort_order > b.sort_order) return 1;
+            if (a.sort_order < b.sort_order) return -1;
+            return 0;
+        });
+    };
+
     const getColumnFormData = () => {
+        const getAllFields = (form: any): Array<any> => {
+            let fields: Array<any> = [];
+            if (form.fields) {
+                fields = form.fields;
+            }
+            if (form.sections) {
+                form.sections.forEach((section: any) => {
+                    fields = [...fields, ...getAllFields(section)];
+                });
+            }
+            return fields;
+        }
         const data: DataFormInterface = {
             fields: []
         };
-        if (gridState.data_form?.fields) {
-            const activeColumns: Array<string> = [];
-            gridState.data_grid_column_state.forEach((item) => {
-                if (item.is_active) {
-                    activeColumns.push(item.name);
-                }
+        if (gridState.data_form) {
+            getSortedData(getAllFields(gridState.data_form)).forEach((item: BaseFieldInterface) => {
+                const checkField: CheckFieldInterface = {
+                    _id: item.name,
+                    name: item.name,
+                    field_type: 'switch_field',
+                    label: item.label,
+                    sort_order: item.sort_order,
+                };
+                data.fields?.push(checkField);
             });
-            gridState.data_form.fields.sort((a, b) => ((a.sort_order ?? 0) > (b.sort_order ?? 0)) ? 1 : -1)
-                .map((item: AbstractFieldInterface) => {
-                    const checkField: CheckFieldInterface = {
-                        _id: item.name,
-                        name: item.name,
-                        field_type: 'switch_field',
-                        label: item.label,
-                        sort_order: item.sort_order,
-                    };
-                    if (item.name && activeColumns.includes(item.name)) {
-                        checkField['value'] = true;
-                    }
-                    data.fields.push(checkField);
-                    return null;
-                });
         }
 
         return data;
     };
 
     const onColumnFormSubmit = (data: any) => {
-        console.log('onColumnFormSubmit -> activeColumns --> data', data);
-        const activeColumns: Array<string> = [];
-        Object.keys(data).forEach((name) => {
-            activeColumns.push(name);
+        const newColState: Array<string> = [];
+        const columnState: Array<any> = gridState.data_grid_column_state ?? [];
+        columnState.forEach((column) => {
+            let newCol: any = { ...column };
+            if (data[column.name] !== undefined) {
+                newCol.is_active = data[column.name];
+            }
+            newColState.push(newCol);
         });
         gridDispatch({
-            type: ACTION_SET_ACTIVE_COLUMNS,
-            payload: activeColumns,
+            type: ACTION_SET_COLUMN_STATE,
+            payload: newColState,
         });
-        // listBuilderDispatch({ type: ACTION_SET_ACTIVE_PANEL, payload: undefined });
+        gridDispatch({ type: ACTION_SET_ACTIVE_PANEL, payload: undefined });
     };
 
     if (gridState.active_panel !== PANEL_ACTIVE_COLUMN_SETTINGS) {
@@ -82,18 +104,20 @@ const ColumnConfigComponent = () => {
                 title={'Settings'}
                 size={PANEL_SIZE_SMALL}
                 onClose={onPanelClose}
+                bodyStyle={{ paddingRight: 14 }}
                 footerStyle={{ textAlign: 'center' }}
                 footer={(
                     <Button type="primary" onClick={() => {
                         form?.submit();
                     }}>Save</Button>
-                )}
-            >
+                )}>
                 <DataForm
                     form={form}
+                    initialValues={getFormInitialValues()}
                     formData={getColumnFormData()}
                     formType={FORM_TYPE_HORIZONTAL}
                     onSubmit={onColumnFormSubmit}
+                    labelAlign="left"
                     labelCol={{ span: 18 }}
                     wrapperCol={{ span: 6 }}
                 />

@@ -2,27 +2,35 @@
  * @copyright EveryWorkflow. All rights reserved.
  */
 
-import React, {useCallback, useContext, useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
+import React, { useCallback, useContext, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Table from 'antd/lib/table';
-import Menu from 'antd/lib/menu';
-import Dropdown from 'antd/lib/dropdown';
-import Button from 'antd/lib/button';
 import DataGridContext from '@EveryWorkflow/DataGridBundle/Context/DataGridContext';
 import FilterComponent from '@EveryWorkflow/DataGridBundle/Component/FilterComponent';
 import HeaderPanelComponent from '@EveryWorkflow/DataGridBundle/Component/HeaderPanelComponent';
-import {DATA_GRID_TYPE_INLINE} from '@EveryWorkflow/DataGridBundle/Component/DataGridComponent/DataGridComponent';
+import { DATA_GRID_TYPE_INLINE } from '@EveryWorkflow/DataGridBundle/Component/DataGridComponent/DataGridComponent';
 import ColumnConfigComponent from '@EveryWorkflow/DataGridBundle/Component/ColumnConfigComponent';
-import {ACTION_SET_SELECTED_ROW_IDS} from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
-import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
-import SelectFieldInterface from "@EveryWorkflow/DataFormBundle/Model/Field/SelectFieldInterface";
+import { ACTION_SET_SELECTED_ROW_IDS } from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
+import DataFormInterface from '@EveryWorkflow/DataFormBundle/Model/DataFormInterface';
+import BaseSectionInterface from '@EveryWorkflow/DataFormBundle/Model/Section/BaseSectionInterface';
+import RowActionRenderComponent from '@EveryWorkflow/DataGridBundle/Component/RowActionRenderComponent';
+import ColumnRenderComponent from '@EveryWorkflow/DataGridBundle/Component/ColumnRenderComponent';
 
 const TableComponent = () => {
-    const {state: gridState, dispatch: gridDispatch} = useContext(DataGridContext);
+    const { state: gridState, dispatch: gridDispatch } = useContext(DataGridContext);
     const [selectedRows, setSelectedRows] = useState<Array<any>>([]);
     const location = useLocation();
     const navigate = useNavigate();
     const urlParams = new URLSearchParams(location.search);
+
+    const getSortedData = (items: Array<any>): Array<any> => {
+        return items?.reverse().sort((a: any, b: any) => {
+            if (a.sort_order === undefined && b.sort_order !== undefined) return 1;
+            if (a.sort_order > b.sort_order) return 1;
+            if (a.sort_order < b.sort_order) return -1;
+            return 0;
+        });
+    };
 
     const getColumnData = useCallback(() => {
         const columnData: Array<any> = [];
@@ -43,71 +51,51 @@ const TableComponent = () => {
             }
         }
 
-        gridState.data_grid_column_state.forEach((col) => {
-            const field = gridState.data_form?.fields.find(
-                (item) => item.name === col.name
-            );
+        getSortedData([...gridState.data_grid_column_state]).forEach((col) => {
+            if (!col.is_active || !gridState.data_form) {
+                return;
+            }
+
+            const getFieldFromName = (dataFormOrSection: DataFormInterface | BaseSectionInterface, name: string) => {
+                const field = dataFormOrSection.fields?.find(
+                    (item) => item.name === col.name
+                );
+                if (field) {
+                    return field;
+                }
+                if (dataFormOrSection.sections) {
+                    let secfield: any = undefined;
+                    dataFormOrSection.sections.forEach(section => {
+                        let field: any = getFieldFromName(section, name);
+                        if (field) {
+                            secfield = field;
+                        }
+                    });
+                    if (secfield) {
+                        return secfield;
+                    }
+                }
+                return undefined;
+            }
+
+            const field = getFieldFromName(gridState.data_form, col.name);
             if (field) {
                 columnData.push({
                     title: field.label,
                     dataIndex: field.name,
                     sorter: gridState.data_grid_config?.sortable_columns?.includes(field.name ?? ''),
-                    // eslint-disable-next-line react/display-name
-                    render: (value: any) => <span>{value}</span>,
-                    sortOrder: field.name === sortField ? sortOrder : false,
-                    width: 240,
+                    render: (value: any) => <ColumnRenderComponent fieldData={field} fieldValue={value} />,
+                    sortOrder: field.name === sortField ? sortOrder : undefined,
                 });
             }
         });
-        // if (columnData.length && gridState.data_grid_config?.row_actions?.length) {
-        if (columnData.length) {
+
+        if (columnData.length && gridState.data_grid_config?.row_actions?.length) {
             columnData.push({
                 title: 'Action',
                 key: 'operation',
-                fixed: 'right',
-                width: 84,
-                // eslint-disable-next-line react/display-name
                 render: (_: any, record: any) => {
-                    const generateMenuLink = (action: any) => {
-                        if (action.path) {
-                            let path: string = action.path;
-                            Object.keys(record).forEach((itemKey: string) => {
-                                path = path.replace(
-                                    '{' + itemKey + '}',
-                                    record[itemKey]
-                                );
-                            });
-                            return path;
-                        }
-                        return '';
-                    }
-
-                    return (
-                        <Dropdown
-                            overlay={
-                                <Menu>
-                                    {gridState.data_grid_config?.row_actions?.map(
-                                        (action: any, index: number) => (
-                                            <Menu.Item key={index}>
-                                                <Link
-                                                    to={generateMenuLink(action)}
-                                                    target={action.button_target}
-                                                >
-                                                    {action.label}
-                                                </Link>
-                                            </Menu.Item>
-                                        )
-                                    )}
-                                </Menu>
-                            }
-                            trigger={['click']}
-                            placement="bottomRight"
-                        >
-                            <Button type="text" size="small">
-                                <EllipsisOutlined/>
-                            </Button>
-                        </Dropdown>
-                    );
+                    return <RowActionRenderComponent rowData={record} />;
                 },
             });
         }
@@ -116,31 +104,13 @@ const TableComponent = () => {
 
     const getDataSource = useCallback(() => {
         const data: Array<any> = [];
-
-        const getSelectOptionValue = (field: SelectFieldInterface, fieldValue: string): string => {
-            field.options?.forEach(option => {
-                if (option.key?.toString() === fieldValue.toString()) {
-                    fieldValue = option.value?.toString();
-                }
-            });
-            return fieldValue;
-        }
-
         gridState.data_collection?.results.forEach((item) => {
             const newItem: any = {
                 key: item._id,
             };
             gridState.data_grid_column_state.forEach((col) => {
                 if (col.name in item) {
-                    const fieldValue: any = item[col.name];
-                    const field = gridState.data_form?.fields.find(field => {
-                        return field.name === col.name;
-                    });
-                    if (field && 'select_field' === field.field_type) {
-                        newItem[col.name] = getSelectOptionValue(field, fieldValue);
-                    } else {
-                        newItem[col.name] = fieldValue;
-                    }
+                    newItem[col.name] = item[col.name];
                 }
             });
             data.push(newItem);
@@ -150,7 +120,6 @@ const TableComponent = () => {
 
     const getRowSelection = useCallback(() => {
         const onSelectChange = (selectedRowKeys: Array<any>) => {
-            console.log('selectedRowKeys changed: ', selectedRowKeys);
             setSelectedRows(selectedRowKeys);
             gridDispatch({
                 type: ACTION_SET_SELECTED_ROW_IDS,
@@ -197,17 +166,17 @@ const TableComponent = () => {
     return (
         <>
             {gridState.data_grid_type === DATA_GRID_TYPE_INLINE && (
-                <HeaderPanelComponent/>
+                <HeaderPanelComponent />
             )}
             {gridState.data_collection && (
                 <>
-                    <FilterComponent/>
+                    <FilterComponent />
                     <Table
                         className="virtual-grid"
-                        rowSelection={getRowSelection()}
+                        rowSelection={gridState.data_grid_config?.bulk_actions?.length ? getRowSelection() : undefined}
                         dataSource={getDataSource()}
                         columns={getColumnData()}
-                        scroll={{ x: 1500 }}
+                        scroll={{ x: gridState.data_grid_column_state.length * 160 }}
                         pagination={{
                             position: ["topRight", "bottomRight"],
                             defaultPageSize: Number(urlParams.get('per-page')) ? Number(urlParams.get('per-page')) : 20,
@@ -220,9 +189,8 @@ const TableComponent = () => {
                             total: gridState.data_collection.meta?.total_count,
                         }}
                         onChange={onTableChange}
-                        // size={'small'}
                     />
-                    <ColumnConfigComponent/>
+                    <ColumnConfigComponent />
                 </>
             )}
         </>

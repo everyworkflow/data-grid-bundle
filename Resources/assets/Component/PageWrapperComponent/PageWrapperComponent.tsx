@@ -2,8 +2,8 @@
  * @copyright EveryWorkflow. All rights reserved.
  */
 
-import React, {useCallback, useContext} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import React, { useCallback, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import Col from 'antd/lib/col';
 import Space from 'antd/lib/space';
 import Button from 'antd/lib/button';
@@ -16,16 +16,18 @@ import DataGridContext, {
     PANEL_ACTIVE_COLUMN_SETTINGS,
     PANEL_ACTIVE_FILTERS,
 } from '@EveryWorkflow/DataGridBundle/Context/DataGridContext';
-import {ACTION_SET_ACTIVE_PANEL} from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
+import { ACTION_SET_ACTIVE_PANEL } from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
 import Badge from "antd/lib/badge";
+import HeaderActionRenderComponent from '@EveryWorkflow/DataGridBundle/Component/HeaderActionRenderComponent';
+import BulkActionRenderComponent from '@EveryWorkflow/DataGridBundle/Component/BulkActionRenderComponent';
 
 interface PageWrapperComponentProps {
     children?: JSX.Element;
 }
 
-const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
+const PageWrapperComponent = ({ children }: PageWrapperComponentProps) => {
     const location = useLocation();
-    const {state: gridState, dispatch: gridDispatch} = useContext(
+    const { state: gridState, dispatch: gridDispatch } = useContext(
         DataGridContext
     );
 
@@ -43,7 +45,7 @@ const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
             return Object.keys(urlParamData).length;
         }
         return 0;
-    }, [history])
+    }, [location])
 
     return (
         <>
@@ -54,38 +56,22 @@ const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
                             {gridState.selected_row_ids.length > 0 && (
                                 <>
                                     <div>
-                                        <strong style={{marginRight: 8}}>
+                                        <strong style={{ marginRight: 8 }}>
                                             {gridState.selected_row_ids.length}{' '}
                                         </strong>
-                                        <span style={{marginRight: 8}}>
+                                        <span style={{ marginRight: 8 }}>
                                             {gridState.selected_row_ids.length > 1
                                                 ? 'rows'
                                                 : 'row'}{' '}
                                             selected
                                         </span>
                                     </div>
-                                    {!!gridState.data_grid_config?.bulk_actions?.length && (
-                                        <>
-                                            <strong style={{marginRight: 8}}>Bulk action:</strong>
-                                            {gridState.data_grid_config?.bulk_actions?.map(
-                                                (bulkAction: any, index: number) => (
-                                                    <Button
-                                                        key={index}
-                                                        onClick={() => {
-                                                            console.log('Bulk action :D');
-                                                        }}
-                                                    >
-                                                        {bulkAction.label}
-                                                    </Button>
-                                                )
-                                            )}
-                                        </>
-                                    )}
+                                    <BulkActionRenderComponent />
                                 </>
                             )}
                         </Space>
                     </Col>
-                    <Col span={12} style={{textAlign: 'right'}}>
+                    <Col span={12} style={{ textAlign: 'right' }}>
                         <Space>
                             {gridState.data_grid_config?.is_filter_enabled && (
                                 <Tooltip title="Filter" placement="bottom">
@@ -93,11 +79,9 @@ const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
                                         <Button
                                             type="dashed"
                                             shape="circle"
-                                            icon={<FilterOutlined/>}
+                                            icon={<FilterOutlined />}
                                             onClick={() => {
-                                                if (
-                                                    gridState.active_panel === PANEL_ACTIVE_FILTERS
-                                                ) {
+                                                if (gridState.active_panel === PANEL_ACTIVE_FILTERS) {
                                                     gridDispatch({
                                                         type: ACTION_SET_ACTIVE_PANEL,
                                                         payload: undefined,
@@ -119,12 +103,9 @@ const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
                                     <Button
                                         type="dashed"
                                         shape="circle"
-                                        icon={<ControlOutlined/>}
+                                        icon={<ControlOutlined />}
                                         onClick={() => {
-                                            if (
-                                                gridState.active_panel ===
-                                                PANEL_ACTIVE_COLUMN_SETTINGS
-                                            ) {
+                                            if (gridState.active_panel === PANEL_ACTIVE_COLUMN_SETTINGS) {
                                                 gridDispatch({
                                                     type: ACTION_SET_ACTIVE_PANEL,
                                                     payload: undefined,
@@ -139,18 +120,12 @@ const PageWrapperComponent = ({children}: PageWrapperComponentProps) => {
                                     />
                                 </Tooltip>
                             )}
-                            {gridState.data_grid_config?.header_actions?.map(
-                                (headerAction: any, index: number) => (
-                                    <Link key={index} to={headerAction.path ?? ''}>
-                                        <Button type="primary">{headerAction.label}</Button>
-                                    </Link>
-                                )
-                            )}
+                            <HeaderActionRenderComponent />
                         </Space>
                     </Col>
                 </>
             </PageHeaderComponent>
-            <BreadcrumbComponent/>
+            <BreadcrumbComponent />
             <div className="app-container mt-4">{children}</div>
         </>
     );

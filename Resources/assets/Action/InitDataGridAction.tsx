@@ -5,35 +5,47 @@
 import { ACTION_SET_GRID_DATA } from '@EveryWorkflow/DataGridBundle/Reducer/DataGridReducer';
 import FetchRemoteData from '@EveryWorkflow/DataGridBundle/Action/FetchRemoteData';
 import DataGridInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridInterface';
-import AbstractFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface';
+import BaseFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/BaseFieldInterface';
 import DataGridColumnInterface from '@EveryWorkflow/DataGridBundle/Model/DataGridColumnInterface';
 import AlertAction, { ALERT_TYPE_ERROR } from '@EveryWorkflow/PanelBundle/Action/AlertAction';
+import DataFormInterface from '@EveryWorkflow/DataFormBundle/Model/DataFormInterface';
+import BaseSectionInterface from '@EveryWorkflow/DataFormBundle/Model/Section/BaseSectionInterface';
 
 const InitDataGridAction = (dataGridUrl: string) => {
 
     const initDataGrid = (dispatch: any, data: DataGridInterface) => {
-        const columnState: Array<DataGridColumnInterface> = [];
         if (dataGridUrl) {
             // fetch from localstorage
         }
-        data.data_form?.fields.forEach((field: AbstractFieldInterface) => {
-            if (field.name && (data.data_grid_config?.active_columns?.includes(field.name) || data.data_grid_config?.active_columns === undefined)) {
-                columnState.push({
-                    name: field.name,
-                    sort_order: field.sort_order,
-                    is_active: true,
-                    is_sortable: true,
-                    is_filterable: true,
+
+        const getColumnState = (dataFormOrSection: DataFormInterface | BaseSectionInterface): Array<DataGridColumnInterface> => {
+            let columnState: Array<DataGridColumnInterface> = [];
+            dataFormOrSection.fields?.forEach((field: BaseFieldInterface) => {
+                if (field.name) {
+                    columnState.push({
+                        name: field.name,
+                        sort_order: field.sort_order,
+                        is_active: data.data_grid_config?.active_columns?.includes(field.name),
+                        is_sortable: data.data_grid_config?.sortable_columns?.includes(field.name),
+                        is_filterable: data.data_grid_config?.filterable_columns?.includes(field.name),
+                    });
+                }
+            });
+            if (dataFormOrSection.sections) {
+                dataFormOrSection.sections.forEach((section: BaseSectionInterface) => {
+                    columnState = [...columnState, ...getColumnState(section)];
                 });
             }
-        });
+            return columnState;
+        }
 
-        columnState.sort((a: any, b: any) => a.sort_order > b.sort_order ? 1 : -1);
-
-        dispatch({
-            type: ACTION_SET_GRID_DATA,
-            payload: { ...data, data_grid_column_state: columnState },
-        });
+        if (data.data_form) {
+            const currentColumnState = getColumnState(data.data_form);
+            dispatch({
+                type: ACTION_SET_GRID_DATA,
+                payload: { ...data, data_grid_column_state: currentColumnState },
+            });
+        }
     }
 
     return async (dispatch: any) => {
@@ -44,10 +56,9 @@ const InitDataGridAction = (dataGridUrl: string) => {
         FetchRemoteData(dataGridUrl).then((data: DataGridInterface) => {
             initDataGrid(dispatch, data);
         }).catch((error: any) => {
-            console.log('error -->', error.message);
             AlertAction({
-                message: error.message,
-                title: 'Fetch error',
+                description: error.message,
+                message: 'Fetch error',
                 type: ALERT_TYPE_ERROR,
             });
         });

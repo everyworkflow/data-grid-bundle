@@ -28,4 +28,11 @@ export const dataGridState: DataGridStateInterface = {
     data_grid_config: undefined,
     data_form: undefined,
     data_grid_column_state: [],
+
+
+    grid_header_action_maps: {},
+    grid_row_action_maps: {},
+    grid_bulk_action_maps: {},
+    grid_column_maps: {},
+    grid_filter_fields_maps: {},
 };

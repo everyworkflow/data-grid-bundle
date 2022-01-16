@@ -40,8 +40,7 @@ const HeaderPanelComponent = () => {
                                     payload: PANEL_ACTIVE_FILTERS,
                                 });
                             }
-                        }}
-                    >
+                        }}>
                         Filter
                     </button>
                 )}
@@ -62,8 +61,7 @@ const HeaderPanelComponent = () => {
                                     payload: PANEL_ACTIVE_COLUMN_SETTINGS,
                                 });
                             }
-                        }}
-                    >
+                        }}>
                         Column settings
                     </button>
                 )}

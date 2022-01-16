@@ -99,9 +99,9 @@ class DataGridFactory implements DataGridFactoryInterface
     {
         if (is_array($form)) {
             if (isset($form['fields'], $form['data'])) {
-                $form = $this->formFactory->create($form['fields'], $form['data']);
+                $form = $this->formFactory->create($form['data'])->setFields($form['fields']);
             } else {
-                $form = $this->formFactory->create($form);
+                $form = $this->formFactory->create()->setFields($form);
             }
         } elseif (is_null($form)) {
             $form = $this->formFactory->create();
