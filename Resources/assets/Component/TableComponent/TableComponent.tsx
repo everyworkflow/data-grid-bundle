@@ -24,8 +24,7 @@ const TableComponent = () => {
     const urlParams = new URLSearchParams(location.search);
 
     const getSortedData = (items: Array<any>): Array<any> => {
-        return items?.reverse().sort((a: any, b: any) => {
-            if (a.sort_order === undefined && b.sort_order !== undefined) return 1;
+        return items?.sort((a: any, b: any) => {
             if (a.sort_order > b.sort_order) return 1;
             if (a.sort_order < b.sort_order) return -1;
             return 0;
