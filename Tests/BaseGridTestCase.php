@@ -35,7 +35,7 @@ class BaseGridTestCase extends BaseFormTestCase
     public function getExampleUserForm(ContainerInterface $container): FormInterface
     {
         $formFieldFactory = $this->getFormFieldFactory($container);
-        $formFactory = $this->getFormFactory($formFieldFactory);
+        $formFactory = $this->getFormFactory($container);
         $fieldOptionFactory = new FieldOptionFactory($this->getDataObjectFactory());
 
         $form = $formFactory->create();

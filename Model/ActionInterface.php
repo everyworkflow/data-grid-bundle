@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\DataGridBundle\Model;
 
-use EveryWorkflow\PanelBundle\Model\ButtonInterface;
+use EveryWorkflow\CoreBundle\Component\Action\ButtonInterface;
 
 interface ActionInterface extends ButtonInterface
 {

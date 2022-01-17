@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace EveryWorkflow\DataGridBundle\Model;
 
 use EveryWorkflow\CoreBundle\Model\DataObjectInterface;
-use EveryWorkflow\PanelBundle\Model\Button;
+use EveryWorkflow\CoreBundle\Component\Action\Button;
 
 class Action extends Button implements ActionInterface
 {
