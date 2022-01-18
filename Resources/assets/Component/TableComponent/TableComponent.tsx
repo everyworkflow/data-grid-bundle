@@ -175,7 +175,7 @@ const TableComponent = () => {
                         rowSelection={gridState.data_grid_config?.bulk_actions?.length ? getRowSelection() : undefined}
                         dataSource={getDataSource()}
                         columns={getColumnData()}
-                        scroll={{ x: gridState.data_grid_column_state.length * 160 }}
+                        scroll={{ x: gridState.data_grid_column_state.filter(item => !!item.is_active).length * 160 }}
                         pagination={{
                             position: ["topRight", "bottomRight"],
                             defaultPageSize: Number(urlParams.get('per-page')) ? Number(urlParams.get('per-page')) : 20,

@@ -13,7 +13,7 @@ interface SelectFieldColumnProps {
 const SelectFieldColumn = ({ fieldData, fieldValue }: SelectFieldColumnProps) => {
     const getSelectOptionValue = (): string => {
         fieldData?.options?.forEach(option => {
-            if (option.key?.toString() === fieldValue.toString()) {
+            if (option.key?.toString() === fieldValue?.toString()) {
                 fieldValue = option.value?.toString();
             }
         });
