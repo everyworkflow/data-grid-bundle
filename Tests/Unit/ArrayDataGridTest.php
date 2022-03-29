@@ -11,6 +11,7 @@ use EveryWorkflow\DataGridBundle\Factory\ActionFactory;
 use EveryWorkflow\DataGridBundle\Factory\DataGridFactory;
 use EveryWorkflow\DataGridBundle\Model\DataGridConfigInterface;
 use EveryWorkflow\DataGridBundle\Tests\BaseGridTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ArrayDataGridTest extends BaseGridTestCase
 {
@@ -58,7 +59,8 @@ class ArrayDataGridTest extends BaseGridTestCase
             null,
             $form
         );
-        $gridData = $dataGrid->toArray();
+        
+        $gridData = $dataGrid->setFromRequest(new Request(['for' => 'data-grid']))->toArray();
 
         self::assertArrayHasKey(
             'data_collection',

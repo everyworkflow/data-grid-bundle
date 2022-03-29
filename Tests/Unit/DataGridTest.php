@@ -12,6 +12,7 @@ use EveryWorkflow\DataGridBundle\Factory\DataGridFactory;
 use EveryWorkflow\DataGridBundle\Model\DataGridConfigInterface;
 use EveryWorkflow\DataGridBundle\Tests\BaseGridTestCase;
 use EveryWorkflow\MongoBundle\Repository\BaseRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 class DataGridTest extends BaseGridTestCase
 {
@@ -60,7 +61,7 @@ class DataGridTest extends BaseGridTestCase
         $form = $this->getExampleUserForm($container);
 
         $dataGrid = $dataGridFactory->create($testRepository, $dataGridConfig, $parameter, $form);
-        $gridData = $dataGrid->toArray();
+        $gridData = $dataGrid->setFromRequest(new Request(['for' => 'data-grid']))->toArray();
 
         $exampleUserData = $this->getExampleUserData();
 
