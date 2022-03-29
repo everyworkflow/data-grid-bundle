@@ -92,10 +92,13 @@ class DataGrid implements DataGridInterface
             }
         }
 
-        return [
-            self::KEY_DATA_COLLECTION => $source->toArray(),
-            self::KEY_DATA_GRID_CONFIG => $config->toArray(),
-            self::KEY_DATA_FORM => $form->toArray(),
+        $data = [
+            self::KEY_DATA_COLLECTION => $source->toArray()
         ];
+        if ($this->request->get('for') === 'data-grid') {
+            $data[self::KEY_DATA_GRID_CONFIG] = $config->toArray();
+            $data[self::KEY_DATA_FORM] = $form->toArray();
+        }
+        return $data;
     }
 }
