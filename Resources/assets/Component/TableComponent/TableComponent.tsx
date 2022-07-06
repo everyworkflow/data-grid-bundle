@@ -83,7 +83,7 @@ const TableComponent = () => {
                     title: field.label,
                     dataIndex: field.name,
                     sorter: gridState.data_grid_config?.sortable_columns?.includes(field.name ?? ''),
-                    render: (value: any) => <ColumnRenderComponent fieldData={field} fieldValue={value} />,
+                    render: (value: any, record: any) => <ColumnRenderComponent fieldData={field} fieldValue={value} rowData={record} />,
                     sortOrder: field.name === sortField ? sortOrder : undefined,
                 });
             }
