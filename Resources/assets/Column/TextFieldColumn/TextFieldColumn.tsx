@@ -8,6 +8,7 @@ import TextFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/TextFi
 interface TextFieldColumnProps {
     fieldData?: TextFieldInterface;
     fieldValue?: any;
+    rowData?: any;
 }
 
 const TextFieldColumn = ({ fieldData, fieldValue }: TextFieldColumnProps) => {

@@ -10,6 +10,7 @@ import Popover from 'antd/lib/popover';
 interface DateTimePickerFieldColumnProps {
     fieldData?: SelectFieldInterface;
     fieldValue?: any;
+    rowData?: any;
 }
 
 const DateTimePickerFieldColumn = ({ fieldData, fieldValue }: DateTimePickerFieldColumnProps) => {

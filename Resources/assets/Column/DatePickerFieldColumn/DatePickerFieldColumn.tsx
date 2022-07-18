@@ -9,6 +9,7 @@ import SelectFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/Sele
 interface DatePickerFieldColumnProps {
     fieldData?: SelectFieldInterface;
     fieldValue?: any;
+    rowData?: any;
 }
 
 const DatePickerFieldColumn = ({ fieldData, fieldValue }: DatePickerFieldColumnProps) => {

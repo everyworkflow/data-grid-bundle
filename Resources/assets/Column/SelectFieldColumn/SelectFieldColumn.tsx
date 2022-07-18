@@ -8,6 +8,7 @@ import SelectFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/Sele
 interface SelectFieldColumnProps {
     fieldData?: SelectFieldInterface;
     fieldValue?: any;
+    rowData?: any;
 }
 
 const SelectFieldColumn = ({ fieldData, fieldValue }: SelectFieldColumnProps) => {

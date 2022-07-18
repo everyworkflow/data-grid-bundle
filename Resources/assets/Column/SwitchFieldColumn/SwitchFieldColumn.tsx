@@ -8,6 +8,7 @@ import SwitchFieldInterface from '@EveryWorkflow/DataFormBundle/Model/Field/Swit
 interface SwitchFieldColumnProps {
     fieldData?: SwitchFieldInterface;
     fieldValue?: any;
+    rowData?: any;
 }
 
 const SwitchFieldColumn = ({ fieldData, fieldValue }: SwitchFieldColumnProps) => {
