@@ -102,7 +102,7 @@ class DataGrid implements DataGridInterface
             return $this->getSource()
                 ->getParameter()
                 ->setFilters($this->filters)
-                ->setOptions($this->getOptions())
+                ->setOptions($this->options)
                 ->setFromRequest($this->getRequest())
                 ->getFilters();
         }
@@ -122,7 +122,7 @@ class DataGrid implements DataGridInterface
         if ($this->getRequest()) {
             return $this->getSource()
                 ->getParameter()
-                ->setFilters($this->getFilters())
+                ->setFilters($this->filters)
                 ->setOptions($this->options)
                 ->setFromRequest($this->getRequest())
                 ->getOptions();
