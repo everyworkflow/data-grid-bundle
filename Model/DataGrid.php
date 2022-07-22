@@ -55,7 +55,7 @@ class DataGrid implements DataGridInterface
     public function getSource(): ArraySourceInterface
     {
         if ($this->source instanceof RepositorySourceInterface) {
-            $this->source->setForm($form);
+            $this->source->setForm($this->getForm());
         }
         if ($this->getRequest()) {
             $this->source->setRequest($this->getRequest());
