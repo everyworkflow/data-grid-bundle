@@ -32,4 +32,16 @@ interface DataGridInterface extends ArrayableInterface
     public function setSource(ArraySourceInterface $collectionSource): self;
 
     public function setFromRequest(Request $request): self;
+
+    public function setRequest(Request $request): self;
+
+    public function getRequest(): ?Request;
+
+    public function setFilters(array $filters): self;
+
+    public function getFilters(): array;
+
+    public function setOptions(array $options): self;
+
+    public function getOptions(): array;
 }

@@ -17,22 +17,15 @@ use Symfony\Component\HttpFoundation\Request;
 class DataGrid implements DataGridInterface
 {
     protected ?Request $request = null;
-
-    protected DataObjectInterface $dataObject;
-    protected DataGridConfigInterface $dataGridConfig;
-    protected FormInterface $form;
-    protected ArraySourceInterface $source;
+    protected array $filters = [];
+    protected array $options = [];
 
     public function __construct(
-        DataObjectInterface $dataObject,
-        DataGridConfigInterface $dataGridConfig,
-        FormInterface $form,
-        ArraySourceInterface $source
+        protected DataObjectInterface $dataObject,
+        protected DataGridConfigInterface $dataGridConfig,
+        protected FormInterface $form,
+        protected ArraySourceInterface $source
     ) {
-        $this->dataObject = $dataObject;
-        $this->dataGridConfig = $dataGridConfig;
-        $this->form = $form;
-        $this->source = $source;
     }
 
     public function getConfig(): DataGridConfigInterface
@@ -61,6 +54,12 @@ class DataGrid implements DataGridInterface
 
     public function getSource(): ArraySourceInterface
     {
+        if ($this->source instanceof RepositorySourceInterface) {
+            $this->source->setForm($form);
+        }
+        if ($this->getRequest()) {
+            $this->source->setRequest($this->getRequest());
+        }
         return $this->source;
     }
 
@@ -78,18 +77,71 @@ class DataGrid implements DataGridInterface
         return $this;
     }
 
+    public function setRequest(Request $request): self
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public function getRequest(): ?Request
+    {
+        return $this->request;
+    }
+
+    public function setFilters(array $filters): self
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getFilters(): array
+    {
+        if ($this->getRequest()) {
+            return $this->getSource()
+                ->getParameter()
+                ->setFilters($this->filters)
+                ->setOptions($this->getOptions())
+                ->setFromRequest($this->getRequest())
+                ->getFilters();
+        }
+
+        return $this->filters;
+    }
+
+    public function setOptions(array $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        if ($this->getRequest()) {
+            return $this->getSource()
+                ->getParameter()
+                ->setFilters($this->filters)
+                ->setOptions($this->getOptions())
+                ->setFromRequest($this->getRequest())
+                ->getOptions();
+        }
+
+        return $this->options;
+    }
+
     public function toArray(): array
     {
         $form = $this->getForm();
         $source = $this->getSource();
         $config = $this->getConfig();
 
-        if ($source instanceof RepositorySourceInterface) {
-            $source->setForm($form);
-
-            if ($this->request) {
-                $source->getParameter()->setFromRequest($this->request);
-            }
+        if ($source instanceof RepositorySourceInterface && $this->getRequest()) {
+            $source->getParameter()
+                ->setFilters($this->getFilters())
+                ->setOptions($this->getOptions())
+                ->setFromRequest($this->getRequest());
         }
 
         $data = [

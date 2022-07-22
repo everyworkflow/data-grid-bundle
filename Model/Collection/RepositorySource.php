@@ -19,26 +19,15 @@ use MongoDB\BSON\Regex;
 
 class RepositorySource extends ArraySource implements RepositorySourceInterface
 {
-    protected BaseRepositoryInterface $baseRepository;
-    protected DataGridConfigInterface $dataGridConfig;
-    protected DataGridParameterInterface $dataGridParameter;
-    protected FormInterface $form;
-    protected DataObjectFactoryInterface $dataObjectFactory;
-
     public function __construct(
-        BaseRepositoryInterface $baseRepository,
-        DataGridConfigInterface $dataGridConfig,
-        DataGridParameterInterface $dataGridParameter,
-        FormInterface $form,
+        protected BaseRepositoryInterface $baseRepository,
+        protected DataGridConfigInterface $dataGridConfig,
+        protected DataGridParameterInterface $dataGridParameter,
+        protected FormInterface $form,
         DataCollectionInterface $dataCollection,
         DataObjectFactoryInterface $dataObjectFactory,
     ) {
         parent::__construct($dataCollection, $dataObjectFactory, []);
-        $this->baseRepository = $baseRepository;
-        $this->dataGridConfig = $dataGridConfig;
-        $this->dataGridParameter = $dataGridParameter;
-        $this->form = $form;
-        $this->dataObjectFactory = $dataObjectFactory;
     }
 
     public function getRepository(): BaseRepositoryInterface

@@ -16,6 +16,10 @@ interface DataGridParameterInterface extends ArrayableInterface
     public const KEY_FILTERS = 'filters';
     public const KEY_OPTIONS = 'options';
 
+    public function setRequest(Request $request): self;
+
+    public function getRequest(): ?Request;
+
     public function getFilters(): array;
 
     public function setFilters(array $filters): self;

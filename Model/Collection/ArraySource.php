@@ -11,30 +11,34 @@ namespace EveryWorkflow\DataGridBundle\Model\Collection;
 use EveryWorkflow\CoreBundle\Model\DataObjectFactoryInterface;
 use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataGridBundle\Model\DataCollectionInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ArraySource implements ArraySourceInterface
 {
+    protected ?Request $request = null;
     /**
      * @var ArrayableInterface[]
      */
     protected array $results = [];
-    /**
-     * @var DataCollectionInterface
-     */
-    protected DataCollectionInterface $dataCollection;
-    /**
-     * @var DataObjectFactoryInterface
-     */
-    protected DataObjectFactoryInterface $dataObjectFactory;
 
     public function __construct(
-        DataCollectionInterface $dataCollection,
-        DataObjectFactoryInterface $dataObjectFactory,
+        protected DataCollectionInterface $dataCollection,
+        protected DataObjectFactoryInterface $dataObjectFactory,
         array $results = [],
     ) {
-        $this->dataCollection = $dataCollection;
-        $this->dataObjectFactory = $dataObjectFactory;
         $this->results = $results;
+    }
+
+    public function setRequest(Request $request): self
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public function getRequest(): ?Request
+    {
+        return $this->request;
     }
 
     public function getCollection(): DataCollectionInterface

@@ -10,9 +10,14 @@ namespace EveryWorkflow\DataGridBundle\Model\Collection;
 
 use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataGridBundle\Model\DataCollectionInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 interface ArraySourceInterface extends ArrayableInterface
 {
+    public function setRequest(Request $request): self;
+
+    public function getRequest(): ?Request;
+
     public function getCollection(): DataCollectionInterface;
 
     public function setCollection(DataCollectionInterface $dataCollection): self;

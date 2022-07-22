@@ -13,16 +13,26 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DataGridParameter implements DataGridParameterInterface
 {
+    protected ?Request $request = null;
     protected array $filters = [];
     protected array $options = [];
 
-    protected DataObjectInterface $dataObject;
-
-    public function __construct(DataObjectInterface $dataObject, array $filters = [], array $options = [])
+    public function __construct(protected DataObjectInterface $dataObject, array $filters = [], array $options = [])
     {
-        $this->dataObject = $dataObject;
         $this->filters = $filters;
         $this->options = $options;
+    }
+
+    public function getRequest(): ?Request
+    {
+        return $this->request;
+    }
+
+    public function setRequest(Request $request): self
+    {
+        $this->request = $request;
+
+        return $this;
     }
 
     public function getFilters(): array
@@ -51,6 +61,8 @@ class DataGridParameter implements DataGridParameterInterface
 
     public function setFromRequest(Request $request): self
     {
+        $this->request = $request;
+
         $perPage = $request->query->getInt('per-page', 20);
         $limit = 20;
         if ($perPage >= 1) {
@@ -61,23 +73,30 @@ class DataGridParameter implements DataGridParameterInterface
         if ($page >= 1) {
             $skip = ($page - 1) * $perPage;
         }
-        $this->setOptions([
+
+        $optionData = [
             'skip' => $skip,
             'limit' => $limit,
             'sort_field' => $request->query->get('sort-field'),
             'sort_order' => $request->query->get('sort-order'),
-        ]);
+        ];
+        $optionData = array_merge($optionData, $this->getOptions());
+        $this->setOptions($optionData);
 
-        $filter = $request->query->get('filter');
-        if (is_string($filter)) {
+        $requestFilter = $request->query->get('filter');
+        $filterData = [];
+        if (is_string($requestFilter)) {
             try {
-                $filterData = $this->getFilters();
-                $filterData += json_decode($filter, true, 512, JSON_THROW_ON_ERROR);
-                $this->setFilters($filterData);
+                $requestFilterData = json_decode($requestFilter, true, 512, JSON_THROW_ON_ERROR);
+                if (is_array($requestFilter)) {
+                    $filterData = array_merge($filterData, $requestFilterData);
+                }
             } catch (\Exception $e) {
                 // Ignore filter data if unable to decode
             }
         }
+        $filterData = array_merge($filterData, $this->getFilters());
+        $this->setFilters($filterData);
 
         return $this;
     }
