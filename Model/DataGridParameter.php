@@ -88,7 +88,7 @@ class DataGridParameter implements DataGridParameterInterface
         if (is_string($requestFilter)) {
             try {
                 $requestFilterData = json_decode($requestFilter, true, 512, JSON_THROW_ON_ERROR);
-                if (is_array($requestFilter)) {
+                if (is_array($requestFilterData)) {
                     $filterData = array_merge($filterData, $requestFilterData);
                 }
             } catch (\Exception $e) {
