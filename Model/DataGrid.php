@@ -122,8 +122,8 @@ class DataGrid implements DataGridInterface
         if ($this->getRequest()) {
             return $this->getSource()
                 ->getParameter()
-                ->setFilters($this->filters)
-                ->setOptions($this->getOptions())
+                ->setFilters($this->getFilters())
+                ->setOptions($this->options)
                 ->setFromRequest($this->getRequest())
                 ->getOptions();
         }
