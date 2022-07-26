@@ -139,14 +139,15 @@ const TableComponent = () => {
 
     const onTableChange = (pagination: any, filters: any, sorter: any) => {
         if (gridState.data_grid_url) {
-            let newUrlPath = location.pathname;
-            newUrlPath += '?page=' + pagination.current;
+            const currentUrlParams = new URLSearchParams(location.search);
+            currentUrlParams.set('page', pagination.current);
+
             if (pagination.pageSize && pagination.pageSize > 0 && pagination.pageSize !== 20) {
-                newUrlPath += '&per-page=' + pagination.pageSize;
+                currentUrlParams.set('per-page', pagination.pageSize);
             }
             if (urlParams.get('filter')) {
                 try {
-                    newUrlPath += '&filter=' + JSON.stringify(JSON.parse(urlParams.get('filter') ?? '{}'));
+                    currentUrlParams.set('filter', JSON.stringify(JSON.parse(urlParams.get('filter') ?? '{}')));
                 } catch (e) {
                     // ignore urlPramData is cannot parse as json
                 }
@@ -156,9 +157,10 @@ const TableComponent = () => {
                 if (sorter.order === 'descend') {
                     sortOrder = 'desc';
                 }
-                newUrlPath += '&sort-field=' + sorter.field + '&sort-order=' + sortOrder;
+                currentUrlParams.set('sort-field', sorter.field);
+                currentUrlParams.set('sort-order', sortOrder);
             }
-            navigate(newUrlPath);
+            navigate(location.pathname + '?' + currentUrlParams.toString());
         }
     }
 

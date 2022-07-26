@@ -103,11 +103,10 @@ const FilterComponent = () => {
                 filterData[key] = data[key];
             }
         });
-        let newUrlPath = location.pathname;
-        if (Object.keys(filterData).length) {
-            newUrlPath += '?filter=' + JSON.stringify(filterData);
-        }
-        navigate(newUrlPath);
+        const currentUrlParams = new URLSearchParams(location.search);
+        currentUrlParams.set('filter', JSON.stringify(filterData));
+        currentUrlParams.set('page', 1);
+        navigate(location.pathname + '?' + currentUrlParams.toString());
     };
 
     const handleResetFilter = () => {
@@ -119,7 +118,10 @@ const FilterComponent = () => {
             }
         });
         form.setFieldsValue(emptyFieldValues);
-        navigate(location.pathname);
+        const currentUrlParams = new URLSearchParams(location.search);
+        currentUrlParams.set('filter', '{}');
+        currentUrlParams.set('page', 1);
+        navigate(location.pathname + '?' + currentUrlParams.toString());
     }
 
     if (!(gridState.active_panel === PANEL_ACTIVE_FILTERS || location.search.includes('filter={'))) {
