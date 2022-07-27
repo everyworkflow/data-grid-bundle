@@ -105,7 +105,7 @@ const FilterComponent = () => {
         });
         const currentUrlParams = new URLSearchParams(location.search);
         currentUrlParams.set('filter', JSON.stringify(filterData));
-        currentUrlParams.set('page', 1);
+        currentUrlParams.set('page', '1');
         navigate(location.pathname + '?' + currentUrlParams.toString());
     };
 
@@ -120,7 +120,7 @@ const FilterComponent = () => {
         form.setFieldsValue(emptyFieldValues);
         const currentUrlParams = new URLSearchParams(location.search);
         currentUrlParams.set('filter', '{}');
-        currentUrlParams.set('page', 1);
+        currentUrlParams.set('page', '1');
         navigate(location.pathname + '?' + currentUrlParams.toString());
     }
 
