@@ -83,7 +83,7 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
         $applicableFilters = [];
 
         $filterableColumns = $this->getConfig()->getFilterableColumns();
-        $filters = $this->getParameter()->getFilters();
+        $filters = $this->getParameter()->getRequestFilters();
         foreach ($filters as $key => $val) {
             if (in_array($key, $filterableColumns, true)) {
                 $applicableFilters[$key] = $val;
@@ -125,13 +125,15 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
             }
         }
 
+        $applicableFilters = array_merge($applicableFilters, $this->getParameter()->getFilters());
+
         return $applicableFilters;
     }
 
     protected function getApplicableOptions(): array
     {
         $applicableOptions = [];
-        $options = $this->getParameter()->getOptions();
+        $options = $this->getParameter()->getRequestOptions();
 
         $sortableColumns = $this->getConfig()->getSortableColumns();
         if (isset($options['sort_field'])) {
@@ -162,6 +164,8 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
         } else {
             $applicableOptions['limit'] = 20;
         }
+
+        $applicableOptions = array_merge($applicableOptions, $this->getParameter()->getOptions());
 
         return $applicableOptions;
     }

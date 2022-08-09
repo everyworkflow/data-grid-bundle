@@ -59,6 +59,30 @@ class DataGridParameter implements DataGridParameterInterface
         return $this;
     }
 
+    public function getRequestFilters(): array
+    {
+        return $this->requestFilters;
+    }
+
+    public function setRequestFilters(array $requestFilters): self
+    {
+        $this->requestFilters = $filters;
+
+        return $this;
+    }
+
+    public function getRequestOptions(): array
+    {
+        return $this->requestOptions;
+    }
+
+    public function setRequestOptions(array $requestOptions): self
+    {
+        $this->requestOptions = $options;
+
+        return $this;
+    }
+
     public function setFromRequest(Request $request): self
     {
         $this->request = $request;
@@ -80,8 +104,7 @@ class DataGridParameter implements DataGridParameterInterface
             'sort_field' => $request->query->get('sort-field'),
             'sort_order' => $request->query->get('sort-order'),
         ];
-        $optionData = array_merge($optionData, $this->getOptions());
-        $this->setOptions($optionData);
+        $this->setRequestOptions($optionData);
 
         $requestFilter = $request->query->get('filter');
         $filterData = [];
@@ -95,8 +118,7 @@ class DataGridParameter implements DataGridParameterInterface
                 // Ignore filter data if unable to decode
             }
         }
-        $filterData = array_merge($filterData, $this->getFilters());
-        $this->setFilters($filterData);
+        $this->setRequestFilters($filterData);
 
         return $this;
     }

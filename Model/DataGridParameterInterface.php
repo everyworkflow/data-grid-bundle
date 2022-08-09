@@ -28,5 +28,13 @@ interface DataGridParameterInterface extends ArrayableInterface
 
     public function setOptions(array $options): self;
 
+    public function getRequestFilters(): array;
+
+    public function setRequestFilters(array $filters): self;
+
+    public function getRequestOptions(): array;
+
+    public function setRequestOptions(array $options): self;
+
     public function setFromRequest(Request $request): self;
 }
