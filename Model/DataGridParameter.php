@@ -66,7 +66,7 @@ class DataGridParameter implements DataGridParameterInterface
 
     public function setRequestFilters(array $requestFilters): self
     {
-        $this->requestFilters = $filters;
+        $this->requestFilters = $requestFilters;
 
         return $this;
     }
@@ -78,7 +78,7 @@ class DataGridParameter implements DataGridParameterInterface
 
     public function setRequestOptions(array $requestOptions): self
     {
-        $this->requestOptions = $options;
+        $this->requestOptions = $requestOptions;
 
         return $this;
     }
