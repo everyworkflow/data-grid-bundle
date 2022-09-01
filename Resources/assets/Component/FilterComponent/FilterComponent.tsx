@@ -55,6 +55,7 @@ const FilterComponent = () => {
         getAllFields(gridState.data_form).forEach((item) => {
             if (item.name && gridState.data_grid_config?.filterable_columns?.includes(item.name)) {
                 const newItem: any = { ...item };
+                newItem['default_value'] = '';
                 newItem['is_required'] = false;
                 newItem['is_disabled'] = false;
                 newItem['is_readonly'] = false;
