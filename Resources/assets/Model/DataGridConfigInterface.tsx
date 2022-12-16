@@ -20,6 +20,7 @@ interface DataGridConfigInterface {
     is_column_setting_enabled?: boolean;
     default_sort_field?: string;
     default_sort_order?: string;
+    row_action_position?: string;
 }
 
 export default DataGridConfigInterface;

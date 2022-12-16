@@ -90,13 +90,29 @@ const TableComponent = () => {
         });
 
         if (columnData.length && gridState.data_grid_config?.row_actions?.length) {
-            columnData.push({
-                title: 'Action',
-                key: 'operation',
-                render: (_: any, record: any) => {
-                    return <RowActionRenderComponent rowData={record} />;
-                },
-            });
+            
+            if (gridState.data_grid_config?.row_action_position === 'first') {
+
+                columnData.unshift(
+                    {
+                        title: 'Action',
+                        key: 'operation',
+                        render: (_: any, record: any) => {
+                            return <RowActionRenderComponent rowData={record} />;
+                        },
+                    }
+                )
+
+            } else {
+
+                columnData.push({
+                    title: 'Action',
+                    key: 'operation',
+                    render: (_: any, record: any) => {
+                        return <RowActionRenderComponent rowData={record} />;
+                    },
+                });
+            }
         }
         return columnData;
     }, [gridState]);

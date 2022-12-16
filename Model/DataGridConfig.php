@@ -220,6 +220,12 @@ class DataGridConfig implements DataGridConfigInterface
         return $this->dataObject->getData(self::KEY_DEFAULT_SORT_FIELD);
     }
 
+    public function setRowActionPosition(string $position = 'last'): self
+    {
+        $this->dataObject->setData(self::KEY_ROW_ACTION_POSITION, $position);
+        return $this;
+    }
+
     public function toArray(): array
     {
         $data = $this->dataObject->toArray();
@@ -259,6 +265,9 @@ class DataGridConfig implements DataGridConfigInterface
             if (is_string($column)) {
                 $data[self::KEY_FILTERABLE_COLUMNS][] = $column;
             }
+        }
+        if (!isset($data[self::KEY_ROW_ACTION_POSITION])) {
+            $data[self::KEY_ROW_ACTION_POSITION] = self::DEFAULT_ROW_ACTION_POSITION;
         }
         return $data;
     }
