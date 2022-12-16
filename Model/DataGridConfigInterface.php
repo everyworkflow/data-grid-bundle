@@ -42,6 +42,9 @@ interface DataGridConfigInterface extends ArrayableInterface
     public const SORT_ORDER_ASC = 'asc';
     public const SORT_ORDER_DESC = 'desc';
 
+    public const KEY_ROW_ACTION_POSITION = 'row_action_position';
+    public const DEFAULT_ROW_ACTION_POSITION = 'last';
+
     public function getActionFactory(): ActionFactoryInterface;
 
     /**
@@ -137,4 +140,6 @@ interface DataGridConfigInterface extends ArrayableInterface
     public function getDefaultSortField(): ?string;
 
     public function setDefaultSortField(string $defaultSortOrder): self;
+
+    public function setRowActionPosition(string $position): self;
 }
