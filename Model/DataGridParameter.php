@@ -14,13 +14,14 @@ use Symfony\Component\HttpFoundation\Request;
 class DataGridParameter implements DataGridParameterInterface
 {
     protected ?Request $request = null;
-    protected array $filters = [];
-    protected array $options = [];
 
-    public function __construct(protected DataObjectInterface $dataObject, array $filters = [], array $options = [])
-    {
-        $this->filters = $filters;
-        $this->options = $options;
+    public function __construct(
+        protected DataObjectInterface $dataObject,
+        protected array $filters = [],
+        protected array $options = [],
+        protected array $requestFilters = [],
+        protected array $requestOptions = [],
+    ) {
     }
 
     public function getRequest(): ?Request

@@ -152,6 +152,9 @@ class RepositorySource extends ArraySource implements RepositorySourceInterface
             }
             $applicableOptions['sort'][$this->getConfig()->getDefaultSortField()] = $sortOrder;
         }
+        if (!isset($applicableOptions['sort'])) {
+            $applicableOptions['sort'] = ['updated_at' => -1];
+        }
 
         if (isset($options['skip']) && is_numeric($options['skip']) && $options['skip'] > 0) {
             $applicableOptions['skip'] = $options['skip'];
