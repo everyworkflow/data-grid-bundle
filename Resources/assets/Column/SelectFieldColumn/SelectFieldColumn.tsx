@@ -21,7 +21,7 @@ const SelectFieldColumn = ({ fieldData, fieldValue }: SelectFieldColumnProps) =>
         return fieldValue;
     }
 
-    return <span className={'field-type-' + fieldData?.field_type + ' column-name-' . fieldData?.name}>{getSelectOptionValue()}</span>;
+    return <span className={'field-type-' + fieldData?.field_type + ' column-name-' + fieldData?.name}>{getSelectOptionValue()}</span>;
 }
 
 export default SelectFieldColumn;
