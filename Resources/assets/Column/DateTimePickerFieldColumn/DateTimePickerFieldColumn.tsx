@@ -22,7 +22,7 @@ const DateTimePickerFieldColumn = ({ fieldData, fieldValue }: DateTimePickerFiel
         <Popover content={(
             <div>{getDateObject().format('YYYY-MM-DD hh:mm:ss A')}</div>
         )}>
-            <span>{fieldValue}</span>
+            <span className={'field-type-' + fieldData?.field_type + ' column-name-' . fieldData?.name}>{fieldValue}</span>
         </Popover>
     );
 }

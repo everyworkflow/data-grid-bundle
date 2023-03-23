@@ -12,7 +12,7 @@ interface SwitchFieldColumnProps {
 }
 
 const SwitchFieldColumn = ({ fieldData, fieldValue }: SwitchFieldColumnProps) => {
-    return <div style={{ textAlign: 'center' }}>{fieldValue ? 'Yes' : 'No'}</div>;
+    return <div className={'field-type-' + fieldData?.field_type + ' column-name-' . fieldData?.name} style={{ textAlign: 'center' }}>{fieldValue ? 'Yes' : 'No'}</div>;
 }
 
 export default SwitchFieldColumn;

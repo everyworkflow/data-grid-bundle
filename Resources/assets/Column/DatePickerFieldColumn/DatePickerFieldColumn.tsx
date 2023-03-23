@@ -18,7 +18,7 @@ const DatePickerFieldColumn = ({ fieldData, fieldValue }: DatePickerFieldColumnP
     }, [fieldValue])
 
     return (
-        <span>{fieldValue ? getDateObject().format('YYYY-MM-DD') : ''}</span>
+        <span className={'field-type-' + fieldData?.field_type + ' column-name-' . fieldData?.name}>{fieldValue ? getDateObject().format('YYYY-MM-DD') : ''}</span>
     );
 }
 

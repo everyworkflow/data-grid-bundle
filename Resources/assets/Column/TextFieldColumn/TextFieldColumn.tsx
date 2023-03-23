@@ -12,7 +12,7 @@ interface TextFieldColumnProps {
 }
 
 const TextFieldColumn = ({ fieldData, fieldValue }: TextFieldColumnProps) => {
-    return <span>{fieldValue}</span>;
+    return <span className={'field-type-' + fieldData?.field_type + ' column-name-' . fieldData?.name}>{fieldValue}</span>;
 }
 
 export default TextFieldColumn;
